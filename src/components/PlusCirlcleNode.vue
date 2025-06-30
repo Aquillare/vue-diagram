@@ -13,7 +13,7 @@
 
 const props = defineProps<{
   data: { label?: string };
-  toggleDrawer?: (() => void) | undefined;
+  toggleDrawer?: ((string?: 'open' | 'close') => void) | undefined;
 }>();
 
 const handleRightMenu = () => {

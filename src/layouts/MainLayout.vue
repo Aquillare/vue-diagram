@@ -9,6 +9,7 @@
             other_node: 'Paso ir a',
           },
         }"
+        :toggleDrawer="toggleRightDrawer"
       />
     </q-drawer>
     <router-view />
@@ -21,7 +22,15 @@ import { provide, ref } from 'vue';
 
 const rightDrawerOpen = ref(false);
 
-function toggleRightDrawer() {
+function toggleRightDrawer(action?: 'open' | 'close') {
+  if (action === 'open') {
+    rightDrawerOpen.value = true;
+  }
+
+  if (action === 'close') {
+    rightDrawerOpen.value = true;
+  }
+
   rightDrawerOpen.value = !rightDrawerOpen.value;
 }
 

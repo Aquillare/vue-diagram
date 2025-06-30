@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-node bg-white">
+  <div class="custom-node bg-white" @click="handleRightMenu">
     <q-icon class="custom-node-icon bg-green-1" name="library_books" size="16px" />
 
     <span>{{ props.data?.label }}</span>
@@ -15,7 +15,12 @@ import { Handle, Position } from '@vue-flow/core';
 
 const props = defineProps<{
   data: { label?: string };
+  toggleDrawer?: ((string?: 'open' | 'close') => void) | undefined;
 }>();
+
+const handleRightMenu = () => {
+  if (props?.toggleDrawer !== undefined) props.toggleDrawer();
+};
 </script>
 
 <style scoped>
@@ -31,6 +36,14 @@ const props = defineProps<{
   justify-content: start;
   padding: 8px;
   align-items: center;
+}
+
+.custom-node:hover {
+  border: 3px solid var(--q-positive);
+}
+
+.vue-flow__node.selected .custom-node {
+  border: 3px solid var(--q-positive);
 }
 
 .custom-node span {

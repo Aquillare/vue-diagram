@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-node bg-grey" @click="handleRightMenu">
+  <div class="custom-node" @click="handleRightMenu">
     <span>{{ props.data?.label }}</span>
 
     <!-- <Handle type="source" :position="Position.Top" :style="{ opacity: 0 }" id="a" />
@@ -12,7 +12,7 @@
 // import { Handle, Position } from '@vue-flow/core';
 
 const props = defineProps<{
-  data: { label?: string };
+  data: { label?: string; color?: string };
   toggleDrawer?: ((string?: 'open' | 'close') => void) | undefined;
 }>();
 
@@ -23,17 +23,19 @@ const handleRightMenu = () => {
 
 <style scoped>
 .custom-node {
-  border-radius: 8px;
-  --vf-handle: transparent;
-  width: 75px;
-  height: 46px;
+  background: white;
+  border: 1px solid grey;
+  border-radius: 50%;
+  width: 54px;
+  height: 54px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .custom-node span {
-  color: white;
+  color: grey;
   font-weight: bold;
+  font-size: 20px;
 }
 </style>

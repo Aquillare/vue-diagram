@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-node bg-positive">
+  <div class="custom-node bg-positive" @click="handleRightMenu">
     <span>{{ props.data?.label }}</span>
 
     <!--<Handle type="source" :position="Position.Top" :style="{ opacity: 0 }" id="a" /> -->
@@ -13,7 +13,12 @@ import { Handle, Position } from '@vue-flow/core';
 
 const props = defineProps<{
   data: { label?: string };
+  toggleDrawer?: ((string?: 'open' | 'close') => void) | undefined;
 }>();
+
+const handleRightMenu = () => {
+  if (props?.toggleDrawer !== undefined) props.toggleDrawer('close');
+};
 </script>
 
 <style scoped>

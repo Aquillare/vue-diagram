@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-node bg-white">
+  <div class="custom-node bg-white" @click="handleRightMenu">
     <q-icon class="custom-node-icon bg-amber-1" name="alt_route" size="24px" />
 
     <span>{{ props.data?.label }}</span>
@@ -15,7 +15,12 @@ import { Handle, Position } from '@vue-flow/core';
 
 const props = defineProps<{
   data: { label?: string };
+  toggleDrawer?: ((string?: 'open' | 'close') => void) | undefined;
 }>();
+
+const handleRightMenu = () => {
+  if (props?.toggleDrawer !== undefined) props.toggleDrawer('close');
+};
 </script>
 
 <style scoped>

@@ -1,8 +1,8 @@
 <template>
   <div style="height: 100vh">
     <VueFlow
-      v-model:nodes="nodes"
-      v-model:edges="edges"
+      :nodes="nodes"
+      :edges="edges"
       class="vue-flow-basic-example bg-blue-grey-1"
       :default-viewport="{ zoom: 1, x: 0, y: 0 }"
       :default-zoom="0.2"
@@ -10,6 +10,7 @@
       :max-zoom="4"
       :nodes-draggable="nodesDraggable"
       :zoom-on-double-click="false"
+      id="flowId"
     >
       <Background :size="1.8" patternColor="#81818a" />
 
@@ -22,19 +23,19 @@
       </template>
 
       <template #node-start="nodeProps">
-        <StartNode v-bind="nodeProps" />
+        <StartNode v-bind="nodeProps" :toggleDrawer="toggleRightDrawer" />
       </template>
 
       <template #node-simpleStep="nodeProps">
-        <SimpleStepNode v-bind="nodeProps" />
+        <SimpleStepNode v-bind="nodeProps" :toggleDrawer="toggleRightDrawer" />
       </template>
 
       <template #node-branch="nodeProps">
-        <BranchNode v-bind="nodeProps" />
+        <BranchNode v-bind="nodeProps" :toggleDrawer="toggleRightDrawer" />
       </template>
 
       <template #node-subBranch="nodeProps">
-        <SubBranchNode v-bind="nodeProps" />
+        <SubBranchNode v-bind="nodeProps" :toggleDrawer="toggleRightDrawer" />
       </template>
 
       <template #node-plusCircle="nodeProps">
@@ -42,12 +43,18 @@
       </template>
 
       <template #node-end="nodeProps">
-        <EndNode v-bind="nodeProps" />
+        <EndNode v-bind="nodeProps" :toggleDrawer="toggleRightDrawer" />
+      </template>
+
+      <template #node-goTo="nodeProps">
+        <GoToNode v-bind="nodeProps" :toggleDrawer="toggleRightDrawer" />
       </template>
 
       <template #edge-custom="edgeProps">
         <SpecialEdge v-bind="edgeProps" />
       </template>
+
+      <CreditsCard />
     </VueFlow>
   </div>
 </template>
@@ -55,75 +62,116 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue';
 import type { Node, Edge } from '@vue-flow/core';
-import { MarkerType, VueFlow } from '@vue-flow/core';
+import { MarkerType, useVueFlow, VueFlow } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
+import { MiniMap } from '@vue-flow/minimap';
 
 // import default controls styles
 import '@vue-flow/controls/dist/style.css';
 
-// these components are only shown as examples of how to use a custom node or edge
-// you can find many examples of how to create these custom components in the examples page of the docs
+// import default minimap styles
+import '@vue-flow/minimap/dist/style.css';
+
 import SpecialNode from '../components/SpecialNode.vue';
 import SpecialEdge from '../components/SpecialEdge.vue';
 import PlusCircleNode from '../components/PlusCirlcleNode.vue';
 import EndNode from 'src/components/EndNode.vue';
 import StartNode from 'src/components/StartNode.vue';
+import GoToNode from 'src/components/GoToNode.vue';
 import SimpleStepNode from 'src/components/SimpleStepNode.vue';
 import BranchNode from 'src/components/BranchNode.vue';
 import SubBranchNode from 'src/components/SubBranchNode.vue';
+import CreditsCard from 'src/components/CreditsCard.vue';
+import { useFlowStore } from 'src/stores/flow-store';
 
-const nodesDraggable = ref(false);
+const flowStore = useFlowStore();
+
+const nodesDraggable = ref(true);
 
 const toggleRightDrawer = inject<(() => void) | undefined>('toggleRightDrawerKey');
 
-// these are our nodes
 const nodes = ref<Node[]>([
-  // an input node, specified by using `type: 'input'`
   {
-    id: '1-start',
+    id: 'start',
     type: 'start',
     position: { x: 660, y: 50 },
     data: { label: 'Inicio' },
   },
 
   {
-    id: '1-plus-node',
+    id: 'plus-node-1',
     type: 'plusCircle',
     position: { x: 695, y: 120 },
     data: { label: '+' },
   },
 
   {
-    id: '1-end',
+    id: 'endOne-1',
     type: 'end',
     position: { x: 672, y: 180 },
     data: { label: 'Fin' },
   },
 ]);
 
-// these are our edges
 const edges = ref<Edge[]>([
-  // default bezier edge
-  // consists of an edge id, source node id and target node id
   {
-    id: '1-start->1-plus-node',
-    source: '1-start',
-    target: '1-plus-node',
+    id: 'start->plus-node-1',
+    source: 'start',
+    target: 'plus-node-1',
   },
 
   {
-    id: '1-plus-node->1-end',
-    source: '1-plus-node',
-    target: '1-end',
+    id: 'plus-node-1>endOne-1',
+    source: 'plus-node-1',
+    target: 'endOne-1',
     markerEnd: {
       type: MarkerType.ArrowClosed,
       color: 'grey',
       strokeWidth: 4,
     },
   },
-
-  // a custom edge, specified by using a custom type name
-  // we choose `type: 'special'` for this example
 ]);
+
+const { onNodeClick, getConnectedEdges, findNode /**, onPaneClick**/ } = useVueFlow('flowId');
+
+onNodeClick(({ node }) => {
+  const connectedEdges = getConnectedEdges(node.id);
+
+  let sourceNode: Node | null = null;
+
+  const targetNodes: Node[] = [];
+
+  connectedEdges.forEach((edge) => {
+    if (edge.target === node.id) {
+      const foundSourceNode = findNode(edge.source);
+      if (foundSourceNode) {
+        sourceNode = foundSourceNode;
+      }
+    }
+
+    if (edge.source === node.id) {
+      const targetNode = findNode(edge.target);
+      if (targetNode) {
+        targetNodes.push(targetNode);
+      }
+    }
+  });
+
+  flowStore.setClickedNode(node, sourceNode, targetNodes);
+
+  console.log(
+    'Node clicked and saved in Pinia:',
+    node.id,
+    'sourceNode',
+    sourceNode,
+    'targetNodes',
+    targetNodes,
+  );
+});
+
+// onPaneClick(() => {
+//   flowStore.clearClickedNode();
+//   console.log('Canvas clicked, selection cleared in Pinia.');
+// });
 </script>
