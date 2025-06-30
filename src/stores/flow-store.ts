@@ -18,7 +18,7 @@ export const useFlowStore = defineStore('flow', {
       this.clickedNode = null;
       this.sourceNodeOfClicked = null;
       this.targetNodesOfClicked = [];
-      this.nodeAwaitingConnection = null;
+      // this.nodeAwaitingConnection = null;
     },
 
     setNodeAwaitingConnection(node: Node | null) {

@@ -1,5 +1,9 @@
 <template>
-  <div class="custom-node bg-white" @click="handleRightMenu">
+  <div
+    class="custom-node bg-white"
+    :class="{ 'node-awaiting-connection': flowStore.isAwaitingConnection }"
+    @click="handleClick"
+  >
     <q-icon class="custom-node-icon bg-amber-1" name="alt_route" size="24px" />
 
     <span>{{ props.data?.label }}</span>
@@ -12,6 +16,7 @@
 
 <script setup lang="ts">
 import { Handle, Position } from '@vue-flow/core';
+import { useFlowStore } from 'src/stores/flow-store';
 
 const props = defineProps<{
   data: { label?: string };
@@ -20,6 +25,14 @@ const props = defineProps<{
 
 const handleRightMenu = () => {
   if (props?.toggleDrawer !== undefined) props.toggleDrawer();
+};
+
+const flowStore = useFlowStore();
+
+const handleClick = () => {
+  if (!flowStore.isAwaitingConnection) {
+    handleRightMenu();
+  }
 };
 </script>
 
@@ -58,5 +71,21 @@ const handleRightMenu = () => {
   padding: 4px;
   border-radius: 6px;
   transform: rotate(3.142rad);
+}
+
+.node-awaiting-connection {
+  border: 3px solid var(--q-primary);
+  box-shadow: 0 0 15px rgba(0, 123, 255, 0.6);
+  background-color: #e0f2ff;
+  animation: pulse-border 0.5s infinite alternate;
+}
+
+@keyframes pulse-border {
+  0% {
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.8);
+  }
 }
 </style>

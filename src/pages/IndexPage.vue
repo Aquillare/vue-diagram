@@ -84,9 +84,11 @@ import BranchNode from 'src/components/BranchNode.vue';
 import SubBranchNode from 'src/components/SubBranchNode.vue';
 import CreditsCard from 'src/components/CreditsCard.vue';
 import { useFlowStore } from 'src/stores/flow-store';
+import { useFormFunctions } from 'src/components/menu/useFormFunctions';
 
 const flowStore = useFlowStore();
 
+const { handleConectionNode } = useFormFunctions();
 const nodesDraggable = ref(true);
 
 const toggleRightDrawer = inject<(() => void) | undefined>('toggleRightDrawerKey');
@@ -155,6 +157,10 @@ onNodeClick(({ node }) => {
       if (targetNode) {
         targetNodes.push(targetNode);
       }
+    }
+
+    if (flowStore.isAwaitingConnection) {
+      handleConectionNode(node);
     }
   });
 

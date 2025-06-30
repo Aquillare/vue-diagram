@@ -1,22 +1,18 @@
+import type { GraphNode } from '@vue-flow/core';
 import { MarkerType, useVueFlow, type Node } from '@vue-flow/core';
 import { useFlowStore } from 'src/stores/flow-store';
 import { computed, inject, ref } from 'vue';
 import { removeNodeAndDescendants } from '../initialNodes';
+
+//Este compose es largo , y será refactorizado proximamente, por cuestion de tiempo por ahora se define de esta forma
 
 export const useFormFunctions = () => {
   const toggleDrawer = inject<(() => void) | undefined>('toggleRightDrawerKey');
 
   const flowStore = useFlowStore();
 
-  const {
-    nodes,
-    addNodes,
-    addEdges,
-    removeNodes,
-    findNode,
-    edges,
-    removeEdges /** ,  toObject, fromObject*/,
-  } = useVueFlow('flowId');
+  const { nodes, addNodes, addEdges, removeNodes, findNode, edges, removeEdges, updateNode } =
+    useVueFlow('flowId');
 
   const nodeCount = computed(() => nodes.value.length);
 
@@ -326,8 +322,10 @@ export const useFormFunctions = () => {
       }
 
       if (nodeType === 'other') {
+        const sourceNodeId = clickedNode.id;
+
         newGoToNode = {
-          id: `goTo-node-${id}`,
+          id: `goToFrom-${sourceNodeId}-${Math.random().toString(36).substring(2, 15)}`,
           type: 'goTo',
           data: { label: '' },
           position: {
@@ -358,6 +356,8 @@ export const useFormFunctions = () => {
           }
 
           addNodes([newGoToNode]);
+
+          flowStore.setNodeAwaitingConnection(newGoToNode);
         }
 
         //Edge
@@ -464,6 +464,47 @@ export const useFormFunctions = () => {
     }
   };
 
+  const handleConectionNode = (node: GraphNode<string>) => {
+    const flowStore = useFlowStore();
+
+    const nodeAwaitId = flowStore.nodeAwaitingConnection?.id;
+
+    if (node?.type === 'branch' || node?.type === 'simpleStep') {
+      if (nodeAwaitId && nodeAwaitId !== node?.id) {
+        const newEdge = {
+          id: `${nodeAwaitId}->${node?.id}`,
+          source: nodeAwaitId,
+          target: node?.id,
+          animated: true,
+        };
+        addEdges([newEdge]);
+
+        if (node?.type === 'branch') {
+          updateNode(nodeAwaitId, {
+            ...flowStore.nodeAwaitingConnection,
+            data: {
+              label: 'alt_route',
+              color: 'amber',
+            },
+          });
+        }
+
+        if (node?.type === 'simpleStep') {
+          updateNode(nodeAwaitId, {
+            ...flowStore.nodeAwaitingConnection,
+            data: {
+              label: 'library_books',
+              color: 'green',
+            },
+          });
+        }
+
+        console.log(`Conexión creada (Pinia): ${nodeAwaitId} -> ${node?.id}`);
+        flowStore.clearNodeAwaitingConnection();
+      }
+    }
+  };
+
   return {
     showOtherStepButton,
     handleAddNode,
@@ -477,5 +518,6 @@ export const useFormFunctions = () => {
     branchNames,
     handleDeleteNode,
     closeSide,
+    handleConectionNode,
   };
 };

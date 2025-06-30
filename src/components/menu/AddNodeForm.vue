@@ -5,38 +5,38 @@
       <q-item-label header class="q-pa-none text-positive text-weight-bold"
         >Tipos de paso simple</q-item-label
       >
-      <q-button type="button" class="simple-node-button bg-white" @click="handleAddNode('step')">
+      <button type="button" class="simple-node-button bg-white" @click="handleAddNode('step')">
         <q-icon
           class="custom-node-icon transform bg-green-1 text-positive"
           name="library_books"
           size="32px"
         />
         <span>{{ props.data?.labels?.simple_node }}</span>
-      </q-button>
+      </button>
     </div>
 
     <div v-if="true" class="q-gutter-y-md">
       <q-item-label header class="q-pa-none text-amber text-weight-bold"
         >Tipos de paso branch</q-item-label
       >
-      <q-button class="simple-node-button bg-white" @click="handleAddNode('branch')">
+      <button class="simple-node-button bg-white" @click="handleAddNode('branch')">
         <q-icon
           class="custom-node-icon transform bg-amber-1 text-amber"
           name="alt_route"
           size="32px"
         />
         <span>{{ props.data?.labels?.branch_node }}</span>
-      </q-button>
+      </button>
     </div>
 
     <div v-if="showOtherStepButton" class="q-gutter-y-md">
       <q-item-label header class="q-pa-none text-brown text-weight-bold"
         >Otros tipos de paso</q-item-label
       >
-      <q-button class="simple-node-button bg-white" @click="handleAddNode('other')">
+      <button class="simple-node-button bg-white" @click="handleAddNode('other')">
         <q-icon class="custom-node-icon bg-brown-1 text-brown" name="moving" size="32px" />
         <span>{{ props.data?.labels?.other_node }}</span>
-      </q-button>
+      </button>
     </div>
   </div>
 

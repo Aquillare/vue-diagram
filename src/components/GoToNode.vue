@@ -1,6 +1,6 @@
 <template>
   <div class="custom-node" @click="handleRightMenu">
-    <span>{{ props.data?.label }}</span>
+    <q-icon v-if="data?.label" :color="data.color" :name="data?.label" size="30px"></q-icon>
 
     <!-- <Handle type="source" :position="Position.Top" :style="{ opacity: 0 }" id="a" />
 
