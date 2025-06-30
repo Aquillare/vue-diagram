@@ -22,7 +22,7 @@ Para ejecutar este proyecto localmente, sigue estos pasos:
 
 ### 0.Requisitos
 
-Asegúrate de tener instalada la versión de Node.js recomendada. Este proyecto fue desarrollado y probado con **Node.js v22.13.1**
+Este proyecto fue desarrollado y probado con **Node.js v22.13.1**
 
 ### 1. Clonar el Repositorio
 
@@ -34,10 +34,6 @@ Asegúrate de tener instalada la versión de Node.js recomendada. Este proyecto 
 
 - **bash**
   npm install
-
-# o si usas Yarn:
-
-# yarn
 
 ### 3. Iniciar en modo desarrollo
 
