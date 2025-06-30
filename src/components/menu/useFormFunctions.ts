@@ -359,8 +359,22 @@ export const useFormFunctions = () => {
 
           addNodes([newGoToNode]);
         }
-      }
 
+        //Edge
+
+        const newPlusToBranchEdge = {
+          id: `${clickedNode?.id}->${newGoToNode.id}`,
+          source: clickedNode?.id,
+          target: newGoToNode.id,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: 'grey',
+            strokeWidth: 4,
+          },
+        };
+
+        addEdges([newPlusToBranchEdge]);
+      }
       flowStore.clearClickedNode();
       console.log('selection cleared in Pinia.');
       if (toggleDrawer) toggleDrawer();

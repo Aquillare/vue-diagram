@@ -5,7 +5,7 @@
       <q-item-label header class="q-pa-none text-positive text-weight-bold"
         >Tipos de paso simple</q-item-label
       >
-      <q-button class="simple-node-button bg-white" @click="handleAddNode('step')">
+      <q-button type="button" class="simple-node-button bg-white" @click="handleAddNode('step')">
         <q-icon
           class="custom-node-icon transform bg-green-1 text-positive"
           name="library_books"
@@ -169,6 +169,7 @@ const { branchName, subBranchOneName, subBranchTwoName } = branchNames;
   justify-content: start;
   padding: 8px;
   align-items: center;
+  cursor: pointer;
 }
 
 .custom-node span {
